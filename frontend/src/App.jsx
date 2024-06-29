@@ -6,7 +6,7 @@ import LikesPage from "./pages/LikesPage"
 import LoginPage from "./pages/LoginPage"
 import SignUpPage from "./pages/SignUpPage"
 
-import Sidebar from "./components/Sidebar"
+import Sidebar from "./components/Sidebar";
 
 
 function App() {
