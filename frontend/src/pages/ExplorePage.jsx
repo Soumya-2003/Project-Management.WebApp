@@ -4,7 +4,6 @@ import Spinner from "../components/Spinner";
 import Repos from "../components/Repos";
 
 const ExplorePage = () => {
-	// https://api.github.com/search/repositories?q=language:javascript&sort=stars&order=desc&per_page=10
 	const [loading, setLoading] = useState(false);
 	const [repos, setRepos] = useState([]);
 	const [selectedLanguage, setSelectedLanguage] = useState("");
@@ -13,14 +12,16 @@ const ExplorePage = () => {
 		setLoading(true);
 		setRepos([]);
 		try {
-			const res = await fetch(`https://api.github.com/search/repositories?q=language:${language}&sort=stars&order=desc&per_page=10`,{
-				headers: {
-					authorization: `token ${import.meta.env.VITE_GITHUB_API_KEY}`,
-				},
-			});
+			const res = await fetch("http://localhost:5000/api/explore/repos/" + language);
 			const data = await res.json();
-			setRepos(data.items); // Here we correctly set the repositories from the `items` field
-	
+			console.log(data);
+			
+			if (data.repos) {
+				setRepos(data.repos);
+			} else {
+				setRepos([]); // Ensure repos is an array
+			}
+
 			setSelectedLanguage(language);
 		} catch (error) {
 			toast.error(error.message);
@@ -28,7 +29,7 @@ const ExplorePage = () => {
 			setLoading(false);
 		}
 	};
-	
+
 	return (
 		<div className='px-4'>
 			<div className='bg-glass max-w-2xl mx-auto rounded-md p-4'>
@@ -36,7 +37,7 @@ const ExplorePage = () => {
 				<div className='flex flex-wrap gap-2 my-2 justify-center'>
 					<img
 						src='/javascript.svg'
-						alt='JavaScript ogo'
+						alt='JavaScript logo'
 						className='h-11 sm:h-20 cursor-pointer'
 						onClick={() => exploreRepos("javascript")}
 					/>
@@ -79,4 +80,5 @@ const ExplorePage = () => {
 		</div>
 	);
 };
+
 export default ExplorePage;

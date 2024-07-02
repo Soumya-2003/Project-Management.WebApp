@@ -7,39 +7,29 @@ import Search from "../components/Search";
 import SortRepos from "../components/SortRepos";
 import Spinner from "../components/Spinner";
 
-
 const HomePage = () => {
 	const [userProfile, setUserProfile] = useState(null);
 	const [repos, setRepos] = useState([]);
 	const [loading, setLoading] = useState(false);
 
-
 	const [sortType, setSortType] = useState("recent");
-	
-	
-	const getUserProfileAndRepos = useCallback(async(username="Soumya-2003") => {
-		setLoading(true)
+
+	const getUserProfileAndRepos = useCallback(async (username = "Soumya-2003") => {
+		setLoading(true);
 		try {
-			const userRes = await fetch(`https://api.github.com/users/${username}`,{
-				headers: {
-					authorization: `token ${import.meta.env.VITE_GITHUB_API_KEY}`,
-				},
-			});
-			const userProfile = await userRes.json();
+			const res = await fetch(`http://localhost:5000/api/users/profile/${username}`);
+			const { repos, userProfile } = await res.json();
+
+			repos.sort((a, b) => new Date(b.created_at) - new Date(a.created_at)); //descending, recent first
+
+			setRepos(repos);
 			setUserProfile(userProfile);
 
-			const repoRes = await fetch(userProfile.repos_url)
-			const repos = await repoRes.json();
-			setRepos(repos);
-			console.log("userProfile:", userProfile);
-			console.log("repos:",repos);
-
-			return {userProfile,repos}
-
+			return { userProfile, repos };
 		} catch (error) {
-			toast.error(error.message)
-		} finally{
-			setLoading(false)
+			toast.error(error.message);
+		} finally {
+			setLoading(false);
 		}
 	}, []);
 
@@ -48,13 +38,14 @@ const HomePage = () => {
 	}, [getUserProfileAndRepos]);
 
 	const onSearch = async (e, username) => {
-
 		e.preventDefault();
+
 		setLoading(true);
 		setRepos([]);
 		setUserProfile(null);
 
-		const {userProfile, repos} = await getUserProfileAndRepos(username);
+		const { userProfile, repos } = await getUserProfileAndRepos(username);
+
 		setUserProfile(userProfile);
 		setRepos(repos);
 		setLoading(false);
@@ -75,14 +66,15 @@ const HomePage = () => {
 
 	return (
 		<div className='m-4'>
-			<Search onSearch = {onSearch}/>
-			{repos.length > 0 && <SortRepos onSort={onSort} sortType={sortType} />}			<div className='flex gap-4 flex-col lg:flex-row justify-center items-start'>
+			<Search onSearch={onSearch} />
+			{repos.length > 0 && <SortRepos onSort={onSort} sortType={sortType} />}
+			<div className='flex gap-4 flex-col lg:flex-row justify-center items-start'>
 				{userProfile && !loading && <ProfileInfo userProfile={userProfile} />}
+
 				{!loading && <Repos repos={repos} />}
 				{loading && <Spinner />}
 			</div>
 		</div>
 	);
 };
-
-export default HomePage
+export default HomePage;
