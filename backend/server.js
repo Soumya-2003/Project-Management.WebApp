@@ -4,6 +4,8 @@ import cors from "cors";
 
 import userRoutes from "./routes/user.route.js";
 import exploreRoutes from "./routes/explore.route.js";
+import { connect } from "mongoose";
+import connectMongoDB from "./db/connectMongodb.js";
 
 dotenv.config();
 
@@ -19,4 +21,5 @@ app.use("/api/explore", exploreRoutes);
 
 app.listen(5000, () => {
   console.log("Server Started at http://localhost:5000");
+  connectMongoDB();
 });
