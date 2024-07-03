@@ -3,6 +3,6 @@ import { explorePopularRepos } from "../controllers/explore.controller.js";
 
 const router = express.Router();
 
-router.get("/repos/:langugae", explorePopularRepos);
+router.get("/repos/:language", explorePopularRepos);
 
 export default router;
