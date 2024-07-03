@@ -4,6 +4,7 @@ import cors from "cors";
 
 import userRoutes from "./routes/user.route.js";
 import exploreRoutes from "./routes/explore.route.js";
+import authRoutes from "./routes/authRoutes.route.js";
 import { connect } from "mongoose";
 import connectMongoDB from "./db/connectMongodb.js";
 
@@ -16,6 +17,7 @@ app.get("/", (req, res) => {
   res.send("Server is ready");
 });
 
+app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/explore", exploreRoutes);
 
